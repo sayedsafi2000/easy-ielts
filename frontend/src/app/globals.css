@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Learnify purple palette + DM Sans ─────────────────────────
+   Mirrors the original ielts-platform-v3-expanded design tokens. */
+:root {
+  --font-sans: "DM Sans", sans-serif;
+
+  /* Brand palette */
+  --color-primary: #9a72ff;
+  --color-primary-deep: #8f69f7;
+  --color-primary-dark: #7a56e0;
+  --color-primary-light: #b798ff;
+  --color-primary-soft: #efe7ff;
+
+  /* Semantic */
+  --color-success: #34ba65;
+  --color-success-bg: #dff1e8;
+  --color-warning: #c89a00;
+  --color-warning-bg: #fff2b3;
+  --color-error: #ff4d59;
+  --color-error-bg: #fff0f0;
+
+  /* Text */
+  --color-text: #222225;
+  --color-text-muted: #7b7b8d;
+  --color-text-light: #a4a4b5;
+
+  /* Surfaces */
+  --color-bg: #d9d1ff;
+  --color-shell: #f8f8fb;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f6f7fb;
+  --color-surface-sidebar: #fafafe;
+
+  /* Borders */
+  --color-border: #ececf3;
+  --color-border-light: #f1f1f7;
+
+  /* Accent soft bgs */
+  --color-yellow-soft: #fff0a8;
+  --color-green-soft: #dfeade;
+  --color-blue-soft: #d7e6ff;
+
+  /* Dark */
+  --color-dark: #2a292f;
+}
+
+html {
+  font-size: 120%;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: "DM Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background-color: #d9d1ff;
+    color: #222225;
+    min-height: 100vh;
+  }
+}
