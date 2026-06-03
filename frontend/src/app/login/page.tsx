@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
@@ -12,6 +12,22 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Show error from Google OAuth redirect
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const err = params.get("error");
+      if (err === "google_not_configured") setError("Google login is not configured yet.");
+      else if (err === "google_denied")    setError("Google login was cancelled.");
+      else if (err === "google_failed")    setError("Google login failed. Please try again.");
+      if (err) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("error");
+        window.history.replaceState({}, "", url.pathname + url.search);
+      }
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -146,7 +162,10 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <button className="w-full flex items-center justify-center gap-2.5 h-12 border border-[#ececf3] rounded-[14px] text-sm font-semibold text-[#353741] hover:bg-[#f6f7fb] transition-colors cursor-pointer">
+          <button
+            onClick={() => { window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/auth/google`; }}
+            className="w-full flex items-center justify-center gap-2.5 h-12 border border-[#ececf3] rounded-[14px] text-sm font-semibold text-[#353741] hover:bg-[#f6f7fb] transition-colors cursor-pointer"
+          >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>

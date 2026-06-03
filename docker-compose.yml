@@ -1,0 +1,118 @@
+version: "3.9"
+
+# ── Easy IELTS — Docker Compose ───────────────────────────────────────────────
+# Usage (local):
+#   cp .env.production.example .env.production
+#   docker compose --env-file .env.production up --build
+#
+# Coolify: import this repo, set env vars in the Coolify dashboard,
+# and point to this docker-compose.yml.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${PGDATABASE:-easy_ielts}
+      POSTGRES_USER:     ${PGUSER:-postgres}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER:-postgres} -d ${PGDATABASE:-easy_ielts}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ielts_net
+
+  # ── Backend (Express + raw SQL) ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV:    production
+      PORT:        4000
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost:3000}
+
+      # PostgreSQL — points to the db service
+      PGHOST:     db
+      PGPORT:     5432
+      PGUSER:     ${PGUSER:-postgres}
+      PGPASSWORD: ${PGPASSWORD:-postgres}
+      PGDATABASE: ${PGDATABASE:-easy_ielts}
+
+      # JWT
+      JWT_SECRET:     ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      COOKIE_NAME:    ${COOKIE_NAME:-eielts_token}
+
+      # Cloudinary
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY:    ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+
+      # Google OAuth
+      GOOGLE_CLIENT_ID:     ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALLBACK_URL:  ${GOOGLE_CALLBACK_URL}
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "${BACKEND_PORT:-4000}:4000"
+    networks:
+      - ielts_net
+
+  # ── DB Migration (runs once, then exits) ────────────────────────────────────
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST:     db
+      PGPORT:     5432
+      PGUSER:     ${PGUSER:-postgres}
+      PGPASSWORD: ${PGPASSWORD:-postgres}
+      PGDATABASE: ${PGDATABASE:-easy_ielts}
+    command: ["node", "scripts/migrate.js"]
+    networks:
+      - ielts_net
+
+  # ── Frontend (Next.js standalone) ───────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Baked into the Next.js bundle at build time
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      PORT:     3000
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    networks:
+      - ielts_net
+
+volumes:
+  postgres_data:
+  uploads_data:
+
+networks:
+  ielts_net:
+    driver: bridge

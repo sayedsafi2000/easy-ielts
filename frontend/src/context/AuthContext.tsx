@@ -37,6 +37,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     refresh();
+    // If redirected back from Google OAuth, refresh auth state from cookie
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("google") === "1") {
+        // Remove the param from URL without page reload
+        const url = new URL(window.location.href);
+        url.searchParams.delete("google");
+        window.history.replaceState({}, "", url.pathname + url.search);
+      }
+    }
   }, [refresh]);
 
   const login = useCallback(async (email: string, password: string) => {

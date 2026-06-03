@@ -80,22 +80,48 @@ function FormatSelectorInner() {
   }, []);
 
   // Pick the newest published test that matches the track and the module.
+  // Prefer tests that have actual content seeded.
+  // If no content-bearing test exists for general track, fall back to academic.
   function pickTest(format: "full" | "single", moduleKey?: string) {
-    const matchTrack = tests.filter((t) => t.type === track);
+    if (!tests.length) return null;
+
+    // Does this test have content for the requested module?
+    function hasContent(t: Test) {
+      if (moduleKey === "listening" || format === "full") {
+        // full mock needs listening content at minimum
+        return (t.listening_count ?? 0) > 0;
+      }
+      if (moduleKey === "reading")  return (t.reading_count ?? 0) > 0;
+      if (moduleKey === "writing")  return (t.writing_count ?? 0) > 0;
+      // speaking: just needs modules array to include speaking
+      return Array.isArray(t.modules) && t.modules.includes("speaking");
+    }
+
+    // Try: same track + has content
+    const sameTrackWithContent = tests.filter((t) => t.type === track && hasContent(t));
+    // Fallback: any track with content
+    const anyWithContent = tests.filter((t) => hasContent(t));
+    // Last resort: same track any
+    const pool = sameTrackWithContent.length > 0 ? sameTrackWithContent
+                : anyWithContent.length > 0        ? anyWithContent
+                : tests;
+
     if (format === "full") {
-      return matchTrack.find((t) => Array.isArray(t.modules) && t.modules.length >= 4) ?? matchTrack[0] ?? tests[0];
+      return pool.find((t) => Array.isArray(t.modules) && t.modules.length >= 4) ?? pool[0];
     }
     return (
-      matchTrack.find((t) => Array.isArray(t.modules) && t.modules.includes(moduleKey || "")) ??
-      matchTrack[0] ??
-      tests[0]
+      pool.find((t) => Array.isArray(t.modules) && t.modules.includes(moduleKey || "")) ??
+      pool[0]
     );
   }
 
   async function startTest(targetHref: string, format: "full" | "single", moduleKey?: string) {
     if (loadingHref) return;
     const t = pickTest(format, moduleKey);
-    if (!t) return;
+    if (!t) {
+      alert("No test content available yet. Please try again later.");
+      return;
+    }
     setLoadingHref(targetHref);
     try {
       const attempt = await api.post<{ id: string }>("/api/attempts", {

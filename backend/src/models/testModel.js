@@ -5,10 +5,13 @@ const { query } = require('../config/db');
 
 async function listPublished() {
   const { rows } = await query(
-    `SELECT id, title, type, modules, difficulty, duration_minutes, status, created_at
-       FROM tests
-      WHERE status = 'published'
-      ORDER BY created_at DESC`
+    `SELECT t.id, t.title, t.type, t.modules, t.difficulty, t.duration_minutes, t.status, t.created_at,
+            (SELECT COUNT(*)::int FROM listening_sections ls WHERE ls.test_id = t.id) AS listening_count,
+            (SELECT COUNT(*)::int FROM reading_passages rp WHERE rp.test_id = t.id) AS reading_count,
+            (SELECT COUNT(*)::int FROM writing_tasks wt WHERE wt.test_id = t.id) AS writing_count
+       FROM tests t
+      WHERE t.status = 'published'
+      ORDER BY t.created_at DESC`
   );
   return rows;
 }

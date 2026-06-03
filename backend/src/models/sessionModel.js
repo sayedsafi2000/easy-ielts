@@ -15,18 +15,16 @@ const MODULE_DURATIONS = {
 
 /**
  * Get an existing session for (attempt, module) or create one.
+ * Uses ON CONFLICT DO NOTHING to handle React StrictMode double-invocation
+ * and any other race conditions gracefully.
  */
 async function startOrResume(attemptId, module) {
-  const existing = await query(
-    `SELECT * FROM test_sessions WHERE attempt_id = $1 AND module = $2 LIMIT 1`,
-    [attemptId, module]
-  );
-  if (existing.rows[0]) return existing.rows[0];
-
   const dur = MODULE_DURATIONS[module] ?? 30 * 60;
   const { rows } = await query(
     `INSERT INTO test_sessions (attempt_id, module, duration_seconds, started_at, expires_at)
      VALUES ($1, $2, $3, NOW(), NOW() + ($3::int || ' seconds')::interval)
+     ON CONFLICT (attempt_id, module) DO UPDATE
+       SET attempt_id = EXCLUDED.attempt_id  -- no-op update, just to get RETURNING
      RETURNING *`,
     [attemptId, module, dur]
   );

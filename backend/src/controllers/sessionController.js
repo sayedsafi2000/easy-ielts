@@ -37,7 +37,19 @@ const start = asyncHandler(async (req, res) => {
   if (!attempt) throw httpError(404, 'Attempt not found.');
   if (attempt.student_id !== req.user.id) throw httpError(403, 'Forbidden.');
 
-  const s = await session.startOrResume(attempt_id, module);
+  let s;
+  try {
+    s = await session.startOrResume(attempt_id, module);
+  } catch (err) {
+    // Fallback: if somehow the INSERT still conflicts, just fetch the existing row
+    if (err.code === '23505') {
+      s = await session.findByAttemptModule(attempt_id, module);
+      if (!s) throw httpError(500, 'Session error. Please try again.');
+    } else {
+      throw err;
+    }
+  }
+
   const answers = (module === 'listening' || module === 'reading')
     ? await session.listAnswers(attempt_id, module)
     : [];

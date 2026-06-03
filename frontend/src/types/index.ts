@@ -69,6 +69,9 @@ export interface Test {
   status: "draft" | "published" | "archived";
   notes?: string;
   created_at: string;
+  listening_count?: number;
+  reading_count?: number;
+  writing_count?: number;
 }
 
 export interface AdminStats {

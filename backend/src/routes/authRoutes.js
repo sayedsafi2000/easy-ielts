@@ -30,4 +30,9 @@ router.get('/me',     requireAuth, ctrl.me);
 router.patch('/me',   requireAuth, ctrl.updateMe);
 router.post('/change-password', requireAuth, ctrl.changePassword);
 
+// Google OAuth
+const google = require('../controllers/googleAuthController');
+router.get('/google',          google.googleRedirect);
+router.get('/google/callback', google.googleCallback);
+
 module.exports = router;

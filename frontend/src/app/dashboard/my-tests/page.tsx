@@ -206,14 +206,14 @@ export default function MyTestsPage() {
                     {t.submitted_at ? `Submitted ${formatDate(t.submitted_at)}` : "Not submitted yet"}
                   </p>
                   {t.status === "completed" ? (
-                    <Link href="/results" className="text-sm font-bold text-[#9a72ff] hover:text-[#8f69f7] cursor-pointer flex items-center gap-1">
+                    <Link href={`/results?attemptId=${t.id}`} className="text-sm font-bold text-[#9a72ff] hover:text-[#8f69f7] cursor-pointer flex items-center gap-1">
                       View results
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>
                   ) : t.status === "in_progress" ? (
-                    <Link href="/start-test" className="text-sm font-bold text-[#9a72ff] hover:text-[#8f69f7] cursor-pointer flex items-center gap-1">
+                    <Link href={`/start-test/format?track=${t.track}`} className="text-sm font-bold text-[#9a72ff] hover:text-[#8f69f7] cursor-pointer flex items-center gap-1">
                       Continue
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

@@ -44,13 +44,12 @@ function WritingTestInner() {
   const [secondsRemaining, setSecondsRemaining] = useState(60 * 60);
   const [submitting, setSubmitting] = useState(false);
 
-  // Writing allows paste? IELTS computer-based test forbids it. We block
-  // clipboard inside the test container too. Tab switch / blur / dev-tools
-  // shortcuts are blocked everywhere.
+  // IELTS computer-based writing: paste is blocked. Tab switch / blur /
+  // dev-tools shortcuts are tracked and auto-submit after 3 violations.
   const handleSubmitRef = useRef<() => void>();
   const cheat = useAntiCheat({
-    disabled: loading || !!loadError,
-    blockClipboard:   true,
+    disabled:         loading || !!loadError,
+    blockClipboard:   true,   // paste blocked in real IELTS CBT
     blockContextMenu: true,
     blockDevtools:    true,
     violationLimit:   3,
