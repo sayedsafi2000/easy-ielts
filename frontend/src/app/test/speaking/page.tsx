@@ -34,6 +34,19 @@ function SpeakingInner() {
   const [parts, setParts] = useState<SPart[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [booking, setBooking] = useState<any | null>(null);
+
+  useEffect(() => {
+    const order: Record<string, number> = { scheduled: 0, time_proposed: 1, assigned: 2, requested: 3 };
+    api.get<any[]>("/api/bookings")
+      .then((list) => {
+        const active = (list ?? [])
+          .filter((b) => order[b.status] !== undefined)
+          .sort((a, b) => order[a.status] - order[b.status])[0] || null;
+        setBooking(active);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!testId) { setLoading(false); return; }
@@ -82,34 +95,70 @@ function SpeakingInner() {
           </div>
         </div>
 
-        {/* Booking status panel */}
+        {/* Booking status panel — wired to the real booking */}
         <div style={{ background: "#fff", border: "1px solid #c8c8c8", marginBottom: 20 }}>
           <div style={{ background: "#003d7c", padding: "8px 16px" }}>
             <span style={{ color: "#fff", fontWeight: 700, fontSize: 13 }}>YOUR SESSION</span>
           </div>
-          <div style={{ padding: "20px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-            <div>
-              <div style={{ fontSize: 13, color: "#555", marginBottom: 6 }}>Scheduled date &amp; time</div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: "#1a1a1a" }}>Friday, 16 May 2026 — 10:00 AM</div>
-              <div style={{ fontSize: 12, color: "#555", marginTop: 4 }}>
-                <span style={{ display: "inline-block", background: "#d4edda", border: "1px solid #28a745", color: "#155724", padding: "1px 8px", fontSize: 11, fontWeight: 700, marginRight: 8 }}>
-                  ✓ CONFIRMED
-                </span>
-                Examiner: Ms. Sarah Thompson
-              </div>
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <Link href="/dashboard/book-speaking" style={{ padding: "7px 18px", background: "#fff", border: "1px solid #c8c8c8", fontSize: 13, color: "#333", textDecoration: "none", display: "inline-block" }}>
-                Change Booking
+
+          {!booking ? (
+            <div style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+              <div style={{ fontSize: 13, color: "#555" }}>You haven&apos;t booked a speaking session yet.</div>
+              <Link href="/dashboard/book-speaking" style={{ padding: "7px 18px", background: "#003d7c", color: "#fff", fontSize: 13, fontWeight: 700, textDecoration: "none", display: "inline-block" }}>
+                Book a session
               </Link>
-              <button disabled style={{ padding: "7px 18px", background: "#c8c8c8", border: "none", fontSize: 13, fontWeight: 700, color: "#888", cursor: "not-allowed" }}>
-                Join Call (opens 5 min before)
-              </button>
             </div>
-          </div>
-          <div style={{ borderTop: "1px solid #c8c8c8", padding: "10px 20px", background: "#fffde7", fontSize: 12, color: "#666" }}>
-            <strong style={{ color: "#333" }}>Note:</strong> A video call link will be sent to your registered email address 30 minutes before the session. Ensure your camera and microphone are working beforehand.
-          </div>
+          ) : (() => {
+            const when = booking.status === "time_proposed" && booking.proposed_at ? booking.proposed_at : booking.scheduled_at;
+            const whenStr = when ? new Date(when).toLocaleString("en-GB", { weekday: "long", day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+            const badge: Record<string, { text: string; bg: string; border: string; color: string }> = {
+              requested:     { text: "AWAITING ASSIGNMENT", bg: "#fff3cd", border: "#ffc107", color: "#7a6000" },
+              assigned:      { text: "EXAMINER REVIEWING",   bg: "#e8f0ff", border: "#005eb8", color: "#003d7c" },
+              time_proposed: { text: "NEW TIME PROPOSED",    bg: "#efe7ff", border: "#8f69f7", color: "#6a45d0" },
+              scheduled:     { text: "✓ CONFIRMED",          bg: "#d4edda", border: "#28a745", color: "#155724" },
+            };
+            const b = badge[booking.status] ?? { text: booking.status.toUpperCase(), bg: "#eee", border: "#999", color: "#555" };
+            return (
+              <>
+                <div style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+                  <div>
+                    <div style={{ fontSize: 13, color: "#555", marginBottom: 6 }}>
+                      {booking.status === "time_proposed" ? "Proposed date & time" : "Scheduled date & time"}
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: 15, color: "#1a1a1a" }}>{whenStr}</div>
+                    <div style={{ fontSize: 12, color: "#555", marginTop: 4 }}>
+                      <span style={{ display: "inline-block", background: b.bg, border: `1px solid ${b.border}`, color: b.color, padding: "1px 8px", fontSize: 11, fontWeight: 700, marginRight: 8 }}>
+                        {b.text}
+                      </span>
+                      {booking.examiner?.full_name ? `Examiner: ${booking.examiner.full_name}` : "Examiner: to be assigned"}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <Link href="/dashboard/book-speaking" style={{ padding: "7px 18px", background: "#fff", border: "1px solid #c8c8c8", fontSize: 13, color: "#333", textDecoration: "none", display: "inline-block" }}>
+                      Manage Booking
+                    </Link>
+                    {booking.status === "scheduled" && booking.join_url ? (
+                      <a href={booking.join_url} target="_blank" rel="noreferrer" style={{ padding: "7px 18px", background: "#28a745", border: "none", fontSize: 13, fontWeight: 700, color: "#fff", textDecoration: "none", display: "inline-block" }}>
+                        Join Call
+                      </a>
+                    ) : (
+                      <button disabled style={{ padding: "7px 18px", background: "#c8c8c8", border: "none", fontSize: 13, fontWeight: 700, color: "#888", cursor: "not-allowed" }}>
+                        {booking.status === "scheduled" ? "Link pending" : "Join Call"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div style={{ borderTop: "1px solid #c8c8c8", padding: "10px 20px", background: "#fffde7", fontSize: 12, color: "#666" }}>
+                  <strong style={{ color: "#333" }}>Note:</strong>{" "}
+                  {booking.status === "time_proposed"
+                    ? "Your examiner proposed a new time. Go to Manage Booking to confirm or decline it."
+                    : booking.status === "scheduled"
+                    ? `This is a live ${booking.provider === "zoom" ? "Zoom" : "Google Meet"} call. Use the Join Call button at your scheduled time. Ensure your camera and microphone work beforehand.`
+                    : "An admin will assign an examiner who confirms your time or proposes a new one. You'll be notified."}
+                </div>
+              </>
+            );
+          })()}
         </div>
 
         <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import NotificationBell from "@/components/NotificationBell";
 
 const nav = [
   {
@@ -169,6 +170,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </aside>
 
         <main className="overflow-y-auto h-screen" style={{ background: "#f8f8fb" }}>
+          <div className="sticky top-0 z-30 flex items-center justify-end gap-3 px-6 h-14 border-b border-[#ececf3]" style={{ background: "rgba(248,248,251,0.85)", backdropFilter: "blur(8px)" }}>
+            <NotificationBell />
+          </div>
           {children}
         </main>
       </div>

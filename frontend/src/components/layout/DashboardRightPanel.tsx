@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import type { DashboardData } from "@/types";
+import NotificationBell from "@/components/NotificationBell";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -62,6 +63,11 @@ export default function DashboardRightPanel() {
   return (
     <aside className="flex flex-col bg-white h-screen sticky top-0" style={{ overflowY: "auto", scrollbarWidth: "none" }}>
       <div className="p-5 flex flex-col gap-5 min-h-full">
+
+        {/* ── Notifications ──────────────────────────────────────── */}
+        <div className="flex justify-end">
+          <NotificationBell />
+        </div>
 
         {/* ── My profile ─────────────────────────────────────────── */}
         <section>
