@@ -7,7 +7,10 @@ const submissionModel  = require('../models/submissionModel');
 const bookingModel     = require('../models/bookingModel');
 const resultModel      = require('../models/resultModel');
 const adminModel       = require('../models/adminModel');
-const { asyncHandler } = require('../middleware/errorHandler');
+const providers        = require('../lib/meetingProviders');
+const mailer           = require('../lib/mailer');
+const notify           = require('../services/notify');
+const { asyncHandler, httpError } = require('../middleware/errorHandler');
 
 const stats = asyncHandler(async (_req, res) => {
   const [totalStudents, testsThisMonth, pendingReviews, upcomingSpeaking, avg] = await Promise.all([
@@ -55,6 +58,37 @@ const listBookings = asyncHandler(async (_req, res) => {
 const updateBooking = asyncHandler(async (req, res) => {
   const b = await adminModel.updateBookingStatus(req.params.id, req.body);
   return res.json({ success: true, data: b });
+});
+
+/** Admin assigns (or reassigns) an examiner to a requested booking. */
+const assignBooking = asyncHandler(async (req, res) => {
+  const { examiner_id } = req.body;
+  if (!examiner_id) throw httpError(400, 'examiner_id is required.');
+
+  const examiner = await userModel.findById(examiner_id);
+  if (!examiner || examiner.role !== 'examiner') throw httpError(400, 'That user is not an examiner.');
+
+  const booking = await bookingModel.assignExaminer(req.params.id, examiner_id, req.user.id);
+  if (!booking) throw httpError(409, 'Booking cannot be assigned in its current state.');
+
+  await notify.notifyUser(examiner_id, {
+    type: 'booking.assigned',
+    title: 'You have a new speaking session to review',
+    body: 'An admin assigned you a speaking session. Accept the time or propose a new one.',
+    link: '/admin/bookings',
+    data: { booking_id: booking.id },
+  });
+
+  return res.json({ success: true, data: booking, message: 'Examiner assigned.' });
+});
+
+/** Which integrations are wired (no secrets) — for the admin Settings page. */
+const integrationsStatus = asyncHandler(async (_req, res) => {
+  const meeting = await providers.statuses();
+  return res.json({
+    success: true,
+    data: { meeting, email: mailer.isConfigured() },
+  });
 });
 
 const listResults = asyncHandler(async (_req, res) => {
@@ -144,7 +178,7 @@ const saveSettings = asyncHandler(async (req, res) => {
 
 module.exports = {
   stats, listStudents, getStudent, setStudentStatus,
-  listBookings, updateBooking,
+  listBookings, updateBooking, assignBooking, integrationsStatus,
   listResults, listExaminers, createExaminer,
   getSubmission, listTestsAdmin,
   getSettings, saveSettings,

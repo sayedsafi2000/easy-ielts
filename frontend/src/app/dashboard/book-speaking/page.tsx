@@ -3,6 +3,34 @@ import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "re
 import Link from "next/link";
 import { api } from "@/lib/api";
 
+type MySession = {
+  id: string;
+  scheduled_at: string;
+  proposed_at: string | null;
+  status: string;
+  provider: string | null;
+  join_url: string | null;
+  recording_status: string | null;
+  band: number | null;
+  examiner: { full_name: string } | null;
+};
+
+const SESSION_STATUS: Record<string, { label: string; bg: string; color: string }> = {
+  requested:     { label: "Awaiting admin", bg: "#fff2b3", color: "#7a6000" },
+  assigned:      { label: "With examiner",  bg: "#e8f0ff", color: "#2a55a0" },
+  time_proposed: { label: "New time proposed", bg: "#efe7ff", color: "#6a45d0" },
+  scheduled:     { label: "Scheduled",      bg: "#dff1e8", color: "#2a9350" },
+  completed:     { label: "Completed",      bg: "#efe7ff", color: "#6a45d0" },
+  cancelled:     { label: "Cancelled",      bg: "#fff0f0", color: "#ff4d59" },
+  declined:      { label: "Declined",       bg: "#fff0f0", color: "#ff4d59" },
+};
+
+function fmtDateTime(iso: string) {
+  return new Date(iso).toLocaleString("en-GB", {
+    weekday: "short", day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
+  });
+}
+
 // Calendar — dynamic: always shows current + next month rolling
 const NOW      = new Date();
 const CUR_YEAR = NOW.getFullYear();
@@ -271,6 +299,34 @@ export default function BookSpeakingPage() {
   const [submitted,   setSubmitted]   = useState(false);
   const [booking,     setBooking]     = useState(false);
   const [bookingError, setBookingError] = useState("");
+  const [provider,    setProvider]    = useState<"google" | "zoom">("google");
+
+  // Existing sessions
+  const [sessions, setSessions] = useState<MySession[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
+  const [actingId, setActingId] = useState<string | null>(null);
+
+  const loadSessions = async () => {
+    try {
+      const data = await api.get<MySession[]>("/api/bookings");
+      setSessions(data ?? []);
+    } catch { /* ignore */ }
+    finally { setSessionsLoading(false); }
+  };
+
+  useEffect(() => { loadSessions(); }, []);
+
+  async function sessionAction(id: string, action: "confirm-time" | "decline-time" | "cancel") {
+    setActingId(id);
+    try {
+      await api.post(`/api/bookings/${id}/${action}`);
+      await loadSessions();
+    } catch (e: any) {
+      alert(e?.message ?? "Action failed.");
+    } finally {
+      setActingId(null);
+    }
+  }
 
   const [focusedDial, setFocusedDial] = useState<number | null>(null);
 
@@ -366,7 +422,8 @@ export default function BookSpeakingPage() {
       if (period === "PM" && h !== 12) h += 12;
       if (period === "AM" && h === 12) h = 0;
       const scheduled_at = new Date(calYear, calMonth, selectedDate, h, parseInt(min, 10)).toISOString();
-      await api.post("/api/bookings", { scheduled_at });
+      await api.post("/api/bookings", { scheduled_at, provider });
+      await loadSessions();
       setSubmitted(true);
     } catch (e: any) {
       setBookingError(e?.message ?? "Failed to book session. Please try again.");
@@ -379,8 +436,78 @@ export default function BookSpeakingPage() {
     <div className="p-8 max-w-3xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Book Speaking Session</h1>
-        <p className="text-sm text-[#7b7b8d] mt-1">Pick a date and time. Admin will confirm within 24 hours.</p>
+        <p className="text-sm text-[#7b7b8d] mt-1">Request a date and time. An admin assigns an examiner who confirms or proposes a new time.</p>
       </div>
+
+      {/* My speaking sessions */}
+      {!sessionsLoading && sessions.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-sm font-bold text-[#222225] mb-3">My speaking sessions</h2>
+          <div className="flex flex-col gap-3">
+            {sessions.map((s) => {
+              const st = SESSION_STATUS[s.status] ?? { label: s.status, bg: "#f6f7fb", color: "#7b7b8d" };
+              const showTime = s.status === "time_proposed" && s.proposed_at ? s.proposed_at : s.scheduled_at;
+              return (
+                <div key={s.id} className="bg-white rounded-[16px] p-4" style={{ border: "1px solid #f1f1f7", boxShadow: "0 8px 18px rgba(32,28,54,0.05)" }}>
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-[#222225]">{fmtDateTime(showTime)}</span>
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: st.bg, color: st.color }}>{st.label}</span>
+                      </div>
+                      <p className="text-xs text-[#7b7b8d] mt-1">
+                        {s.provider === "zoom" ? "Zoom" : "Google Meet"}
+                        {s.examiner?.full_name ? ` · Examiner: ${s.examiner.full_name}` : ""}
+                        {s.status === "completed" && s.band != null ? ` · Band ${s.band}` : ""}
+                      </p>
+                      {s.status === "time_proposed" && (
+                        <p className="text-xs mt-1" style={{ color: "#6a45d0" }}>Your examiner proposed a new time — confirm or decline.</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {s.status === "time_proposed" && (
+                        <>
+                          <button disabled={actingId === s.id} onClick={() => sessionAction(s.id, "confirm-time")}
+                            className="text-xs font-bold px-3 py-1.5 rounded-[10px] text-white cursor-pointer disabled:opacity-60"
+                            style={{ background: "linear-gradient(135deg, #9f79ff 0%, #8f69f7 100%)" }}>
+                            {actingId === s.id ? "…" : "Confirm time"}
+                          </button>
+                          <button disabled={actingId === s.id} onClick={() => sessionAction(s.id, "decline-time")}
+                            className="text-xs font-bold px-3 py-1.5 rounded-[10px] cursor-pointer disabled:opacity-60"
+                            style={{ border: "1px solid #ffd0d3", color: "#ff4d59" }}>
+                            Decline
+                          </button>
+                        </>
+                      )}
+                      {s.status === "scheduled" && s.join_url && (
+                        <a href={s.join_url} target="_blank" rel="noreferrer"
+                          className="text-xs font-bold px-3 py-1.5 rounded-[10px] text-white cursor-pointer"
+                          style={{ background: "linear-gradient(135deg, #9f79ff 0%, #8f69f7 100%)" }}>
+                          Join call
+                        </a>
+                      )}
+                      {s.status === "completed" && (
+                        <Link href="/results" className="text-xs font-bold px-3 py-1.5 rounded-[10px] cursor-pointer" style={{ border: "1px solid #dedee8", color: "#353741" }}>
+                          View result
+                        </Link>
+                      )}
+                      {["requested", "assigned", "time_proposed", "scheduled"].includes(s.status) && (
+                        <button disabled={actingId === s.id} onClick={() => sessionAction(s.id, "cancel")}
+                          className="text-xs font-bold px-3 py-1.5 rounded-[10px] cursor-pointer disabled:opacity-60"
+                          style={{ color: "#7b7b8d" }}>
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-6 mb-2 h-px" style={{ background: "#ececf3" }} />
+          <h2 className="text-sm font-bold text-[#222225] mt-4">Request another session</h2>
+        </div>
+      )}
 
       {bookingError && (
         <div className="mb-6 rounded-[14px] px-4 py-3 text-sm font-medium" style={{ background: "#fff0f0", color: "#ff4d59", border: "1px solid #ffd0d3" }}>
@@ -396,6 +523,30 @@ export default function BookSpeakingPage() {
         <p className="text-sm" style={{ color: "#6a45d0" }}>
           Speaking sessions are a live video call with your examiner. Each session lasts approximately 15 minutes. Ensure you have a stable internet connection and a quiet environment.
         </p>
+      </div>
+
+      {/* Provider selector */}
+      <div className="mb-6">
+        <p className="text-sm font-semibold text-[#222225] mb-2">Video platform</p>
+        <div className="flex gap-3">
+          {([
+            { key: "google", label: "Google Meet" },
+            { key: "zoom",   label: "Zoom" },
+          ] as const).map((p) => (
+            <button
+              key={p.key}
+              onClick={() => setProvider(p.key)}
+              className="flex-1 px-4 py-3 rounded-[14px] text-sm font-bold cursor-pointer transition-all"
+              style={
+                provider === p.key
+                  ? { background: "#efe7ff", color: "#6a45d0", border: "2px solid #9a72ff" }
+                  : { background: "white", color: "#7b7b8d", border: "1px solid #dedee8" }
+              }
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Calendar */}

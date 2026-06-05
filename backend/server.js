@@ -25,6 +25,9 @@ const adminRoutes       = require('./src/routes/adminRoutes');
 const contentRoutes     = require('./src/routes/contentRoutes');
 const sessionRoutes     = require('./src/routes/sessionRoutes');
 const uploadRoutes      = require('./src/routes/uploadRoutes');
+const examinerRoutes    = require('./src/routes/examinerRoutes');
+const notificationRoutes = require('./src/routes/notificationRoutes');
+const webhookRoutes     = require('./src/routes/webhookRoutes');
 const path              = require('path');
 
 const app  = express();
@@ -33,7 +36,12 @@ const PORT = Number(process.env.PORT) || 4000;
 // ─── Middleware ─────────────────────────────────────────────
 app.use(helmet());
 app.use(cookieParser());
-app.use(express.json({ limit: '1mb' }));
+// Keep the raw body on the request so provider webhooks (e.g. Zoom) can verify
+// their HMAC signature, while every other route still gets parsed JSON.
+app.use(express.json({
+  limit: '1mb',
+  verify: (req, _res, buf) => { req.rawBody = buf; },
+}));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // CORS — allow the configured frontend with credentials.
@@ -73,6 +81,9 @@ app.use('/api/admin',           adminRoutes);
 app.use('/api/test-content',    contentRoutes);
 app.use('/api/test-sessions',   sessionRoutes);
 app.use('/api/uploads',         uploadRoutes);
+app.use('/api/examiner',        examinerRoutes);
+app.use('/api/notifications',   notificationRoutes);
+app.use('/api/webhooks',        webhookRoutes);
 
 // ─── 404 + error handler ────────────────────────────────────
 app.use(notFound);

@@ -22,7 +22,11 @@ router.post('/submissions/:id/review', ...AE, submissionCtrl.review);
 
 // Bookings
 router.get('/bookings',             ...AE, adminCtrl.listBookings);
+router.post('/bookings/:id/assign', ...AO, adminCtrl.assignBooking);
 router.patch('/bookings/:id',       ...AE, adminCtrl.updateBooking);
+
+// Integrations status (no secrets)
+router.get('/integrations/status',  ...AO, adminCtrl.integrationsStatus);
 
 // Results (read-only — results are created via submission review)
 router.get('/results',              ...AE, adminCtrl.listResults);

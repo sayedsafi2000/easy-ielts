@@ -22,6 +22,10 @@ interface ResultRow {
     tests: { title: string } | null;
   } | null;
   reviewer: { full_name: string } | null;
+  recording_status?: string | null;
+  recording_url?: string | null;
+  transcript_url?: string | null;
+  transcript_text?: string | null;
 }
 
 const MODULE_ORDER = ["listening", "reading", "writing", "speaking"];
@@ -137,10 +141,17 @@ function ResultsContent() {
             ? `${(r.criteria as any).rawScore} / ${(r.criteria as any).totalQuestions} correct.`
             : ''}`
         : "Awaiting examiner feedback."),
+      recording: mod === "speaking" ? {
+        status: r.recording_status ?? null,
+        url: r.recording_url ?? null,
+        transcriptUrl: r.transcript_url ?? null,
+        transcriptText: r.transcript_text ?? null,
+      } : null,
     };
   }).filter(Boolean) as Array<{
     label: string; module: string; score: number; type: "auto" | "manual";
     criteria: CriteriaItem[] | null; feedback: string;
+    recording: { status: string | null; url: string | null; transcriptUrl: string | null; transcriptText: string | null } | null;
   }>;
 
   // Overall band — mean of available module bands, rounded to nearest 0.5
@@ -346,6 +357,31 @@ function ResultsContent() {
                 <p className="text-xs font-semibold text-[#222225] mb-2">Examiner feedback</p>
                 <p className="text-sm text-[#7b7b8d] leading-relaxed">{m.feedback}</p>
               </div>
+
+              {/* Speaking session recording + transcript */}
+              {m.module === "speaking" && m.recording && (
+                <div className="px-6 py-5" style={{ borderTop: "1px solid #f1f1f7" }}>
+                  <p className="text-xs font-semibold text-[#222225] mb-3">Session recording &amp; transcript</p>
+                  {m.recording.status === "available" && m.recording.url ? (
+                    <a href={m.recording.url} target="_blank" rel="noreferrer"
+                      className="inline-flex items-center gap-2 text-sm font-semibold mb-3 cursor-pointer" style={{ color: "#9a72ff" }}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      Watch recording
+                    </a>
+                  ) : (
+                    <p className="text-xs text-[#a4a4b5] mb-3">Recording not available for this session.</p>
+                  )}
+                  {m.recording.transcriptText ? (
+                    <div className="text-xs leading-relaxed text-[#555] rounded-xl p-3 max-h-48 overflow-y-auto whitespace-pre-wrap" style={{ background: "#f6f7fb" }}>
+                      {m.recording.transcriptText}
+                    </div>
+                  ) : m.recording.transcriptUrl ? (
+                    <a href={m.recording.transcriptUrl} target="_blank" rel="noreferrer" className="text-sm font-semibold cursor-pointer" style={{ color: "#9a72ff" }}>Open transcript ↗</a>
+                  ) : (
+                    <p className="text-xs text-[#a4a4b5]">Transcript not available.</p>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -27,11 +27,16 @@ async function listForStudent(studentId) {
       END AS test_attempts,
       CASE WHEN rev.id IS NULL THEN NULL
            ELSE jsonb_build_object('full_name', rev.full_name)
-      END AS reviewer
+      END AS reviewer,
+      b.recording_status,
+      b.recording_url,
+      b.transcript_url,
+      b.transcript_text
     FROM results r
     LEFT JOIN test_attempts a ON a.id = r.attempt_id
     LEFT JOIN tests t        ON t.id = a.test_id
     LEFT JOIN profiles rev   ON rev.id = r.reviewed_by
+    LEFT JOIN speaking_bookings b ON b.result_id = r.id
     WHERE r.student_id = $1
     ORDER BY r.created_at DESC;
   `;

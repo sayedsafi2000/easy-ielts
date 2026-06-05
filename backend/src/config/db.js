@@ -38,4 +38,29 @@ async function query(text, params) {
   return res;
 }
 
-module.exports = { pool, query };
+/**
+ * Run `fn` inside a single transaction. `fn` receives a `client` whose `.query`
+ * runs on the dedicated connection (so BEGIN/COMMIT wrap every statement).
+ * Commits on success, rolls back on any throw, always releases the connection.
+ *
+ *   await withTransaction(async (client) => {
+ *     const { rows } = await client.query('UPDATE ... RETURNING *', [id]);
+ *     ...
+ *   });
+ */
+async function withTransaction(fn) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await fn(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (err) {
+    try { await client.query('ROLLBACK'); } catch (_) { /* ignore rollback errors */ }
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+module.exports = { pool, query, withTransaction };

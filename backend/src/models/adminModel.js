@@ -87,20 +87,20 @@ async function setStudentStatus(id, suspended) {
 async function listAllBookings() {
   const sql = `
     SELECT
-      b.id, b.student_id, b.examiner_id, b.scheduled_at, b.duration_minutes,
-      b.status, b.meeting_link, b.notes, b.created_at,
+      b.id, b.student_id, b.examiner_id, b.scheduled_at, b.proposed_at,
+      b.duration_minutes, b.status, b.provider, b.join_url, b.meeting_link,
+      b.recording_status, b.recording_url, b.transcript_url, b.result_id,
+      b.notes, b.created_at,
       sp.full_name                                              AS student_name,
       sp.email                                                  AS student_email,
       CASE WHEN ep.id IS NULL THEN NULL ELSE ep.full_name END   AS examiner_name,
       COALESCE(a.track, 'academic')                             AS track,
-      (SELECT r.band_score FROM results r
-        WHERE r.student_id = b.student_id AND r.module = 'speaking'
-        ORDER BY r.created_at DESC LIMIT 1)::float              AS band
+      (SELECT r.band_score::float FROM results r WHERE r.id = b.result_id) AS band
     FROM speaking_bookings b
     LEFT JOIN profiles sp ON sp.id = b.student_id
     LEFT JOIN profiles ep ON ep.id = b.examiner_id
     LEFT JOIN test_attempts a ON a.id = b.attempt_id
-    ORDER BY b.scheduled_at DESC;
+    ORDER BY b.scheduled_at DESC NULLS LAST, b.created_at DESC;
   `;
   const { rows } = await query(sql);
   return rows;
