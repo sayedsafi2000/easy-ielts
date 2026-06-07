@@ -69,6 +69,14 @@ services:
     networks:
       - ielts_net
       - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`ieltsserver.pixelsbee.com`)"
+      - "traefik.http.routers.backend.entryPoints=https"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.backend.loadbalancer.server.port=4000"
+      - "traefik.http.routers.backend-http.rule=Host(`ieltsserver.pixelsbee.com`)"
+      - "traefik.http.routers.backend-http.entryPoints=http"
 
   # ── DB Migration (runs once, then exits) ────────────────────────────────────
   migrate:
@@ -108,6 +116,14 @@ services:
     networks:
       - ielts_net
       - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`ielts.pixelsbee.com`)"
+      - "traefik.http.routers.frontend.entryPoints=https"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.frontend-http.rule=Host(`ielts.pixelsbee.com`)"
+      - "traefik.http.routers.frontend-http.entryPoints=http"
 
 volumes:
   postgres_data:
