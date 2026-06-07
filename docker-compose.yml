@@ -89,6 +89,8 @@ services:
     command: ["node", "scripts/migrate.js"]
     networks:
       - ielts_net
+    labels:
+      - "coolify.managed=false"
 
   # ── Frontend (Next.js standalone) ───────────────────────────────────────────
   frontend:
