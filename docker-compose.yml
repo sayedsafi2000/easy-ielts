@@ -70,6 +70,7 @@ services:
       - "${BACKEND_PORT:-4000}:4000"
     networks:
       - ielts_net
+      - coolify
 
   # ── DB Migration (runs once, then exits) ────────────────────────────────────
   migrate:
@@ -110,6 +111,7 @@ services:
       - "${FRONTEND_PORT:-3000}:3000"
     networks:
       - ielts_net
+      - coolify
 
 volumes:
   postgres_data:
@@ -118,3 +120,5 @@ volumes:
 networks:
   ielts_net:
     driver: bridge
+  coolify:
+    external: true
