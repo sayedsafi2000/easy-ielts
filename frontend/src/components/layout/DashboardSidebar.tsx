@@ -66,7 +66,7 @@ const navItems = [
   },
 ];
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
@@ -76,10 +76,13 @@ export default function DashboardSidebar() {
     router.push("/login");
   }
 
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
+
   return (
     <aside
-      className="flex flex-col py-4 px-4 border-r border-[#ececf3] h-screen sticky top-0 overflow-hidden"
-      style={{ background: "#fafafe" }}
+      className="flex flex-col py-4 px-4 border-r border-[#ececf3] h-screen overflow-y-auto bg-[#fafafe]"
     >
       <Link href="/" className="flex items-center gap-3 px-2 pb-6 pt-2">
         <div
@@ -102,6 +105,7 @@ export default function DashboardSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={handleLinkClick}
               className="flex items-center gap-3 h-12 px-3 rounded-[14px] font-semibold text-sm transition-all duration-150 cursor-pointer"
               style={
                 isActive

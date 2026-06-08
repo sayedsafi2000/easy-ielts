@@ -7,7 +7,7 @@ import NotificationBell from "@/components/NotificationBell";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-export default function DashboardRightPanel() {
+export default function DashboardRightPanel({ onClose }: { onClose?: () => void }) {
   const [data, setData]   = useState<DashboardData | null>(null);
   const [ready, setReady] = useState(false);
 
@@ -23,6 +23,10 @@ export default function DashboardRightPanel() {
   const profile         = data?.profile;
   const upcomingSpeaking = data?.upcomingSpeaking;
   const attempts        = data?.attempts ?? [];
+  
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
 
   // Build activity bars from real attempt data (last 7 days)
   const activityCounts = Array(7).fill(0);
@@ -61,8 +65,24 @@ export default function DashboardRightPanel() {
     : null;
 
   return (
-    <aside className="flex flex-col bg-white h-screen sticky top-0" style={{ overflowY: "auto", scrollbarWidth: "none" }}>
+    <aside className="flex flex-col bg-white h-screen overflow-y-auto" style={{ scrollbarWidth: "none" }}>
       <div className="p-5 flex flex-col gap-5 min-h-full">
+
+        {/* Mobile Close Button */}
+        {onClose && (
+          <div className="flex items-center justify-between lg:hidden mb-2">
+            <h3 className="text-sm font-bold text-slate-900">Profile & Activity</h3>
+            <button
+              onClick={onClose}
+              className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors"
+              aria-label="Close panel"
+            >
+              <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* ── Notifications ──────────────────────────────────────── */}
         <div className="flex justify-end">
@@ -75,6 +95,7 @@ export default function DashboardRightPanel() {
             <h3 className="font-bold text-sm text-[#222225]" style={{ letterSpacing: "-0.03em" }}>My profile</h3>
             <Link
               href="/dashboard/profile"
+              onClick={handleLinkClick}
               className="w-9 h-9 rounded-[12px] border border-[#ececf3] bg-white grid place-items-center text-[#676979] hover:bg-[#efe7ff] hover:text-[#9a72ff] transition-colors cursor-pointer"
               title="Edit profile"
             >
@@ -120,6 +141,7 @@ export default function DashboardRightPanel() {
                 )}
                 <Link
                   href="/dashboard/profile"
+                  onClick={handleLinkClick}
                   className="mt-3 inline-block text-xs font-semibold px-3 py-1.5 rounded-[10px] transition-colors cursor-pointer"
                   style={{ background: "#efe7ff", color: "#6a45d0" }}
                 >
@@ -196,7 +218,7 @@ export default function DashboardRightPanel() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-sm text-[#222225]" style={{ letterSpacing: "-0.03em" }}>Speaking</h3>
-            <Link href="/dashboard/book-speaking" className="text-xs font-semibold cursor-pointer" style={{ color: "#9a72ff" }}>
+            <Link href="/dashboard/book-speaking" onClick={handleLinkClick} className="text-xs font-semibold cursor-pointer" style={{ color: "#9a72ff" }}>
               + Book
             </Link>
           </div>
@@ -250,6 +272,7 @@ export default function DashboardRightPanel() {
               <p className="text-sm text-[#7b7b8d] mb-2">No session booked</p>
               <Link
                 href="/dashboard/book-speaking"
+                onClick={handleLinkClick}
                 className="text-xs font-semibold px-3 py-1.5 rounded-[10px] cursor-pointer inline-block transition-colors"
                 style={{ background: "#efe7ff", color: "#6a45d0" }}
               >
@@ -275,6 +298,7 @@ export default function DashboardRightPanel() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={handleLinkClick}
                 className="flex items-center justify-between px-3.5 py-2.5 rounded-[14px] text-sm font-semibold transition-opacity hover:opacity-80 cursor-pointer"
                 style={{ background: link.bg, color: link.color }}
               >

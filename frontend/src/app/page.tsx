@@ -28,65 +28,107 @@ function Navbar() {
   };
 
   return (
-    <header className="bg-white border-b border-slate-100 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between gap-6">
-        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <header className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-4">
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0" onClick={() => setOpen(false)}>
+          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-700 rounded-lg flex items-center justify-center">
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
-          <span className="text-base font-bold text-slate-900">IELTS <span className="text-blue-700">Journal</span></span>
+          <span className="text-sm sm:text-base font-bold text-slate-900 hidden xs:inline">IELTS <span className="text-blue-700">Journal</span></span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-7">
+        <nav className="hidden md:flex items-center gap-5 lg:gap-7">
           {["Home", "Modules", "Teachers", "Pricing", "FAQ"].map((n) => (
-            <button key={n} onClick={() => scrollToSection(n.toLowerCase())} className="text-sm text-slate-600 hover:text-slate-900 transition-colors cursor-pointer">{n}</button>
+            <button key={n} onClick={() => scrollToSection(n.toLowerCase())} className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer">{n}</button>
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2 lg:gap-3">
           {loading ? (
-            <div className="w-32 h-9" />
+            <div className="w-32 h-9 bg-slate-100 rounded-lg animate-pulse" />
           ) : user ? (
             <>
-              <Link href={dashboardHref} className="text-sm font-medium text-slate-700 hover:text-slate-900 cursor-pointer">Dashboard</Link>
-              <button onClick={handleLogout} className="text-sm font-semibold bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer">Log out</button>
+              <Link href={dashboardHref} className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors cursor-pointer px-3 py-2">Dashboard</Link>
+              <button onClick={handleLogout} className="text-sm font-semibold bg-slate-900 text-white px-3 lg:px-4 py-2 rounded-lg hover:bg-slate-800 transition-all cursor-pointer">Log out</button>
             </>
           ) : (
             <>
-              <Link href="/login" className="text-sm font-medium text-slate-700 hover:text-slate-900 cursor-pointer">Sign In</Link>
-              <Link href="/register" className="text-sm font-semibold bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer">Get Started</Link>
+              <Link href="/login" className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors cursor-pointer px-3 py-2">Sign In</Link>
+              <Link href="/register" className="text-sm font-semibold bg-slate-900 text-white px-3 lg:px-4 py-2 rounded-lg hover:bg-slate-800 transition-all cursor-pointer whitespace-nowrap">Get Started</Link>
             </>
           )}
         </div>
 
-        <button onClick={() => setOpen(!open)} className="md:hidden p-2 text-slate-600 cursor-pointer" aria-label="Menu">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button 
+          onClick={() => setOpen(!open)} 
+          className="md:hidden p-2 -mr-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer" 
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
           </svg>
         </button>
       </div>
-      {open && (
-        <div className="md:hidden px-5 pb-4 space-y-3 border-t border-slate-100">
+      
+      {/* Mobile Menu with smooth animation */}
+      <div 
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="px-4 sm:px-5 py-4 space-y-1 border-t border-slate-100 bg-slate-50">
           {["Home", "Modules", "Teachers", "Pricing", "FAQ"].map((n) => (
-            <button key={n} onClick={() => { scrollToSection(n.toLowerCase()); setOpen(false); }} className="block text-sm text-slate-600 py-1 cursor-pointer text-left w-full">{n}</button>
+            <button 
+              key={n} 
+              onClick={() => { scrollToSection(n.toLowerCase()); setOpen(false); }} 
+              className="block w-full text-left text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-white py-3 px-4 rounded-lg transition-colors cursor-pointer"
+            >
+              {n}
+            </button>
           ))}
-          <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
-            {loading ? null : user ? (
+          <div className="pt-3 mt-3 border-t border-slate-200 space-y-2">
+            {loading ? (
+              <div className="h-10 bg-slate-200 rounded-lg animate-pulse" />
+            ) : user ? (
               <>
-                <Link href={dashboardHref} className="text-sm font-medium text-slate-700 cursor-pointer">Dashboard</Link>
-                <button onClick={handleLogout} className="text-sm font-semibold bg-slate-900 text-white px-4 py-2 rounded-lg text-center cursor-pointer">Log out</button>
+                <Link 
+                  href={dashboardHref} 
+                  onClick={() => setOpen(false)}
+                  className="block text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-white py-3 px-4 rounded-lg transition-colors cursor-pointer"
+                >
+                  Dashboard
+                </Link>
+                <button 
+                  onClick={() => { handleLogout(); setOpen(false); }} 
+                  className="w-full text-sm font-semibold bg-slate-900 text-white py-3 px-4 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  Log out
+                </button>
               </>
             ) : (
               <>
-                <Link href="/login" className="text-sm font-medium text-slate-700 cursor-pointer">Sign In</Link>
-                <Link href="/register" className="text-sm font-semibold bg-slate-900 text-white px-4 py-2 rounded-lg text-center cursor-pointer">Get Started</Link>
+                <Link 
+                  href="/login" 
+                  onClick={() => setOpen(false)}
+                  className="block text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-white py-3 px-4 rounded-lg transition-colors cursor-pointer"
+                >
+                  Sign In
+                </Link>
+                <Link 
+                  href="/register" 
+                  onClick={() => setOpen(false)}
+                  className="block w-full text-center text-sm font-semibold bg-slate-900 text-white py-3 px-4 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  Get Started
+                </Link>
               </>
             )}
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }

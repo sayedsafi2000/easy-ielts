@@ -57,6 +57,8 @@ export interface DashboardData {
   profile: Profile | null;
   attempts: Attempt[];
   upcomingSpeaking: { scheduled_at: string } | null;
+  totalBookings?: number;
+  pendingSubmissions?: number;
 }
 
 export interface Test {
