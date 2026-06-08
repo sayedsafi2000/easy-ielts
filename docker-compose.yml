@@ -84,6 +84,25 @@ services:
       PGDATABASE: ${PGDATABASE:-easy_ielts}
     command: ["node", "scripts/migrate.js"]
 
+  # ── Seed Data (runs after migrate) ──────────────────────────────────────────
+  seed:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      PGHOST:     db
+      PGPORT:     5432
+      PGUSER:     ${PGUSER:-postgres}
+      PGPASSWORD: ${PGPASSWORD:-postgres}
+      PGDATABASE: ${PGDATABASE:-easy_ielts}
+    command: ["node", "scripts/seed.js"]
+
   # ── Frontend (Next.js) ───────────────────────────────────────────────────────
   frontend:
     build:
