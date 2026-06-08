@@ -101,7 +101,16 @@ services:
       PGUSER:     ${PGUSER:-postgres}
       PGPASSWORD: ${PGPASSWORD:-postgres}
       PGDATABASE: ${PGDATABASE:-easy_ielts}
-    command: ["node", "scripts/seed.js"]
+    command: 
+      - sh
+      - -c
+      - |
+        echo "Running seed scripts..."
+        node scripts/seed.js && \
+        node scripts/seed_content.js && \
+        node scripts/seed_phase1.js && \
+        node scripts/seed_demo.js && \
+        echo "All seed scripts completed!"
 
   # ── Frontend (Next.js) ───────────────────────────────────────────────────────
   frontend:
