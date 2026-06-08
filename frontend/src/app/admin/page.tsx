@@ -133,16 +133,16 @@ export default function AdminDashboard() {
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
   return (
-    <div className="p-8 space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Dashboard</h1>
-          <p className="text-sm text-[#7b7b8d] mt-0.5">{today}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Dashboard</h1>
+          <p className="text-xs sm:text-sm text-[#7b7b8d] mt-0.5">{today}</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           <Link
             href="/admin/submissions"
-            className="flex items-center gap-2 text-white text-sm font-bold px-4 py-2.5 rounded-[14px] transition-opacity hover:opacity-90 cursor-pointer"
+            className="flex items-center justify-center gap-2 text-white text-sm font-bold px-4 py-2.5 rounded-[14px] transition-opacity hover:opacity-90 cursor-pointer whitespace-nowrap"
             style={{ background: "#c89a00", boxShadow: "0 8px 18px rgba(200,154,0,0.25)" }}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
           </Link>
           <Link
             href="/admin/students"
-            className="flex items-center gap-2 text-white text-sm font-bold px-4 py-2.5 rounded-[14px] transition-opacity hover:opacity-90 cursor-pointer"
+            className="flex items-center justify-center gap-2 text-white text-sm font-bold px-4 py-2.5 rounded-[14px] transition-opacity hover:opacity-90 cursor-pointer whitespace-nowrap"
             style={{ background: "linear-gradient(135deg, #9f79ff 0%, #8f69f7 100%)", boxShadow: "0 10px 22px rgba(159,121,255,0.28)" }}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
@@ -159,15 +159,15 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {kpis.map((k) => (
-          <div key={k.label} className="rounded-[20px] flex items-center gap-4 p-6" style={{ background: k.bg, boxShadow: "0 14px 28px rgba(32,28,54,0.06)", minHeight: "112px" }}>
-            <div className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.52)", color: k.iconColor }}>
+          <div key={k.label} className="rounded-[20px] flex items-center gap-3 sm:gap-4 p-4 sm:p-6" style={{ background: k.bg, boxShadow: "0 14px 28px rgba(32,28,54,0.06)", minHeight: "100px" }}>
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.52)", color: k.iconColor }}>
               {k.icon}
             </div>
-            <div>
-              <p className="text-[2rem] font-bold text-[#222225] leading-none mb-1" style={{ letterSpacing: "-0.05em" }}>{k.value}</p>
-              <p className="text-sm font-semibold text-[#4b4d58]">{k.label}</p>
+            <div className="min-w-0">
+              <p className="text-xl sm:text-[2rem] font-bold text-[#222225] leading-none mb-1 truncate" style={{ letterSpacing: "-0.05em" }}>{k.value}</p>
+              <p className="text-xs sm:text-sm font-semibold text-[#4b4d58] truncate">{k.label}</p>
             </div>
           </div>
         ))}

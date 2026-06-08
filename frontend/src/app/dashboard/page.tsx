@@ -57,14 +57,14 @@ export default function DashboardOverview() {
 
   if (loading) {
     return (
-      <div className="p-7">
+      <div className="p-4 md:p-7">
         <div className="animate-pulse space-y-5">
-          <div className="h-7 bg-[#ececf3] rounded-xl w-56" />
-          <div className="h-44 bg-[#ececf3] rounded-[24px]" />
-          <div className="grid grid-cols-3 gap-4">
-            {[...Array(3)].map((_, i) => <div key={i} className="h-28 bg-[#ececf3] rounded-[20px]" />)}
+          <div className="h-6 md:h-7 bg-[#ececf3] rounded-xl w-40 md:w-56" />
+          <div className="h-36 md:h-44 bg-[#ececf3] rounded-[24px]" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4">
+            {[...Array(5)].map((_, i) => <div key={i} className="h-24 md:h-28 bg-[#ececf3] rounded-[20px]" />)}
           </div>
-          <div className="h-64 bg-[#ececf3] rounded-[20px]" />
+          <div className="h-48 md:h-64 bg-[#ececf3] rounded-[20px]" />
         </div>
       </div>
     );
@@ -128,7 +128,7 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4">
         {[
           {
             label: "Tests Taken", value: String(attempts.length), bg: "#fff0a8", iconColor: "#a08a1f",

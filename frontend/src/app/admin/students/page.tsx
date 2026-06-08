@@ -87,14 +87,14 @@ export default function StudentsPage() {
   });
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Students</h1>
-          <p className="text-sm text-[#7b7b8d] mt-0.5">{students.length} total students</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Students</h1>
+          <p className="text-xs sm:text-sm text-[#7b7b8d] mt-0.5">{students.length} total students</p>
         </div>
-        <button className="flex items-center gap-2 text-white text-sm font-bold px-4 py-2.5 rounded-[14px] transition-opacity hover:opacity-90 cursor-pointer"
+        <button className="flex items-center justify-center gap-2 text-white text-sm font-bold px-4 py-2.5 rounded-[14px] transition-opacity hover:opacity-90 cursor-pointer w-full sm:w-auto whitespace-nowrap"
           style={{ background: "linear-gradient(135deg, #9f79ff 0%, #8f69f7 100%)", boxShadow: "0 10px 22px rgba(159,121,255,0.28)" }}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
           Export CSV
@@ -144,8 +144,8 @@ export default function StudentsPage() {
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-[20px] overflow-hidden" style={{ border: "1px solid #f1f1f7", boxShadow: "0 14px 28px rgba(32,28,54,0.06)" }}>
-        <table className="w-full">
+      <div className="bg-white rounded-[20px] overflow-x-auto" style={{ border: "1px solid #f1f1f7", boxShadow: "0 14px 28px rgba(32,28,54,0.06)" }}>
+        <table className="w-full min-w-[900px]">
           <thead>
             <tr style={{ borderBottom: "1px solid #f1f1f7", background: "#f6f7fb" }}>
               <th className="text-left text-xs font-bold text-[#7b7b8d] px-6 py-3">Student</th>

@@ -77,11 +77,11 @@ export default function SubmissionsPage() {
   const pendingCount = subs.filter(s => s.status === "Pending").length;
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Submissions</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Submissions</h1>
           <p className="text-sm text-[#7b7b8d] mt-0.5">
             <span className="font-semibold" style={{ color: "#c89a00" }}>{loading ? "…" : pendingCount} pending</span> · {loading ? "…" : subs.length} total
           </p>
@@ -123,8 +123,8 @@ export default function SubmissionsPage() {
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-[20px] overflow-hidden" style={{ border: "1px solid #f1f1f7", boxShadow: "0 14px 28px rgba(32,28,54,0.06)" }}>
-        <table className="w-full">
+      <div className="bg-white rounded-[20px] overflow-x-auto" style={{ border: "1px solid #f1f1f7", boxShadow: "0 14px 28px rgba(32,28,54,0.06)" }}>
+        <table className="w-full min-w-[900px]">
           <thead>
             <tr style={{ borderBottom: "1px solid #f1f1f7", background: "#f6f7fb" }}>
               <th className="text-left text-xs font-bold text-[#7b7b8d] px-6 py-3">Student</th>

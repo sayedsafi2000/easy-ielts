@@ -176,10 +176,25 @@ const saveSettings = asyncHandler(async (req, res) => {
   return res.json({ success: true, message: 'Settings saved.' });
 });
 
+const badgeCounts = asyncHandler(async (_req, res) => {
+  const [pendingSubmissions, actionableBookings] = await Promise.all([
+    submissionModel.countPending(),
+    bookingModel.countActionableForAdmin(),
+  ]);
+  return res.json({
+    success: true,
+    data: {
+      pendingSubmissions,
+      actionableBookings,
+    },
+  });
+});
+
 module.exports = {
   stats, listStudents, getStudent, setStudentStatus,
   listBookings, updateBooking, assignBooking, integrationsStatus,
   listResults, listExaminers, createExaminer,
   getSubmission, listTestsAdmin,
   getSettings, saveSettings,
+  badgeCounts,
 };

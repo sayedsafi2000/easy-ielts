@@ -59,6 +59,7 @@ export interface DashboardData {
   upcomingSpeaking: { scheduled_at: string } | null;
   totalBookings?: number;
   pendingSubmissions?: number;
+  actionableBookings?: number;
 }
 
 export interface Test {

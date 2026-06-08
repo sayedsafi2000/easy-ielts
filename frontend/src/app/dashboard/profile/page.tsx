@@ -96,7 +96,7 @@ export default function ProfilePage() {
   const inputClass = "w-full px-3.5 py-2.5 border border-[#ececf3] rounded-xl text-sm text-[#222225] bg-white focus:outline-none focus:ring-2 focus:ring-[#9a72ff] focus:border-transparent disabled:opacity-50 disabled:bg-[#f6f7fb]";
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Profile</h1>
         <p className="text-sm text-[#7b7b8d] font-medium mt-0.5">Manage your account details and preferences</p>

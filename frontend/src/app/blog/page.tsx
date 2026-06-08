@@ -5,7 +5,7 @@ export default function BlogPage() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,8 +19,8 @@ export default function BlogPage() {
       </header>
 
       {/* Hero */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 to-white">
-        <div className="max-w-4xl mx-auto px-5 text-center">
+      <section className="py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-blue-50 to-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-extrabold text-slate-900 mb-4">IELTS Journal Blog</h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Study tips, band score guides, and IELTS success stories from our community.
@@ -29,8 +29,8 @@ export default function BlogPage() {
       </section>
 
       {/* Coming Soon */}
-      <section className="py-16">
-        <div className="max-w-2xl mx-auto px-5 text-center">
+      <section className="py-12 sm:py-14 lg:py-16">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-12">
             <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg className="w-10 h-10 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">

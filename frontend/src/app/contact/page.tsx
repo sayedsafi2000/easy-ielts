@@ -14,7 +14,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,8 +28,8 @@ export default function ContactPage() {
       </header>
 
       {/* Content */}
-      <section className="py-16">
-        <div className="max-w-5xl mx-auto px-5">
+      <section className="py-12 sm:py-14 lg:py-16">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-extrabold text-slate-900 mb-4">Get in Touch</h1>
             <p className="text-slate-600 max-w-2xl mx-auto">

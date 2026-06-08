@@ -67,10 +67,28 @@ async function markReviewed(id) {
   await query(`UPDATE submissions SET status = 'reviewed' WHERE id = $1`, [id]);
 }
 
+async function listForStudent(studentId) {
+  const { rows } = await query(
+    `SELECT * FROM submissions WHERE student_id = $1 ORDER BY submitted_at DESC`,
+    [studentId]
+  );
+  return rows;
+}
+
+async function countPendingForStudent(studentId) {
+  const { rows } = await query(
+    `SELECT COUNT(*)::int AS count FROM submissions WHERE student_id = $1 AND status = 'pending'`,
+    [studentId]
+  );
+  return rows[0].count;
+}
+
 module.exports = {
   create,
   findById,
   listAllWithMeta,
+  listForStudent,
   countPending,
+  countPendingForStudent,
   markReviewed,
 };

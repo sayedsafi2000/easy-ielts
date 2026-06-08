@@ -318,6 +318,26 @@ async function attachTranscript(id, examinerId, { transcript_text = null, transc
   return rows[0] || null;
 }
 
+// Count bookings that need attention (not confirmed)
+async function countActionableForStudent(studentId) {
+  const { rows } = await query(
+    `SELECT COUNT(*)::int AS count FROM speaking_bookings 
+     WHERE student_id = $1 AND status != 'confirmed'`,
+    [studentId]
+  );
+  return rows[0].count;
+}
+
+// Count bookings that need admin action (requested or time_proposed)
+async function countActionableForAdmin() {
+  const { rows } = await query(
+    `SELECT COUNT(*)::int AS count FROM speaking_bookings 
+     WHERE status IN ('requested', 'time_proposed', 'assigned')`,
+    []
+  );
+  return rows[0].count;
+}
+
 module.exports = {
   listForStudent,
   nextUpcomingForStudent,
@@ -334,4 +354,6 @@ module.exports = {
   submitMarks,
   attachRecording,
   attachTranscript,
+  countActionableForStudent,
+  countActionableForAdmin,
 };

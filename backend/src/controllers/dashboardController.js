@@ -11,19 +11,17 @@ const submissionModel = require('../models/submissionModel');
 const { asyncHandler } = require('../middleware/errorHandler');
 
 const get = asyncHandler(async (req, res) => {
-  const [profile, attempts, upcomingSpeaking, allBookings, submissions] = await Promise.all([
+  const [profile, attempts, upcomingSpeaking, allBookings, pendingSubmissionsCount, actionableBookingsCount] = await Promise.all([
     userModel.findById(req.user.id),
     attemptModel.listForStudent(req.user.id, { limit: 10 }),
     bookingModel.nextUpcomingForStudent(req.user.id),
     bookingModel.listForStudent(req.user.id).catch(() => []),
-    submissionModel ? submissionModel.listForStudent(req.user.id).catch(() => []) : Promise.resolve([]),
+    submissionModel ? submissionModel.countPendingForStudent(req.user.id).catch(() => 0) : Promise.resolve(0),
+    bookingModel.countActionableForStudent(req.user.id).catch(() => 0),
   ]);
 
   // Calculate counts
   const totalBookings = Array.isArray(allBookings) ? allBookings.length : 0;
-  const pendingSubmissions = Array.isArray(submissions) 
-    ? submissions.filter(s => s.status === 'pending' || s.status === 'submitted').length 
-    : 0;
 
   return res.json({
     success: true,
@@ -32,7 +30,8 @@ const get = asyncHandler(async (req, res) => {
       attempts, 
       upcomingSpeaking,
       totalBookings,
-      pendingSubmissions,
+      pendingSubmissions: pendingSubmissionsCount,
+      actionableBookings: actionableBookingsCount,
     },
   });
 });

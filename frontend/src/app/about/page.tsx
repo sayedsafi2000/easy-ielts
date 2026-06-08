@@ -5,7 +5,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white">
       {/* Simple Header */}
       <header className="border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,8 +19,8 @@ export default function AboutPage() {
       </header>
 
       {/* Hero */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 to-white">
-        <div className="max-w-4xl mx-auto px-5 text-center">
+      <section className="py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-blue-50 to-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
             About IELTS Journal
           </h1>
@@ -31,8 +31,8 @@ export default function AboutPage() {
       </section>
 
       {/* Content */}
-      <section className="py-16">
-        <div className="max-w-3xl mx-auto px-5 space-y-12">
+      <section className="py-12 sm:py-14 lg:py-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           {/* Our Story */}
           <div>
             <h2 className="text-2xl font-bold text-slate-900 mb-4">Our Story</h2>

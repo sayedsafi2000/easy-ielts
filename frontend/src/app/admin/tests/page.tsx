@@ -129,18 +129,18 @@ export default function TestsPage() {
   const totalAttempts = tests.reduce((a, t) => a + t.attempts, 0);
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Mock Tests</h1>
-          <p className="text-sm text-[#7b7b8d] mt-0.5">
+          <h1 className="text-xl sm:text-2xl font-bold text-[#222225]" style={{ letterSpacing: "-0.04em" }}>Mock Tests</h1>
+          <p className="text-xs sm:text-sm text-[#7b7b8d] mt-0.5">
             {published} published · {drafts} drafts · {totalAttempts.toLocaleString()} total attempts
           </p>
         </div>
         <Link
           href="/admin/tests/new"
-          className="flex items-center gap-2 text-white text-sm font-bold px-4 py-2.5 rounded-[14px] transition-opacity hover:opacity-90 cursor-pointer"
+          className="flex items-center justify-center gap-2 text-white text-sm font-bold px-4 py-2.5 rounded-[14px] transition-opacity hover:opacity-90 cursor-pointer w-full sm:w-auto whitespace-nowrap"
           style={{ background: "linear-gradient(135deg, #9f79ff 0%, #8f69f7 100%)", boxShadow: "0 10px 22px rgba(159,121,255,0.28)" }}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,7 +151,7 @@ export default function TestsPage() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Full Mock Tests",     value: tests.filter((t) => t.type === "Full Mock").length, bg: "#efe7ff", iconColor: "#6a45d0",
             icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg> },
@@ -162,13 +162,13 @@ export default function TestsPage() {
           { label: "Total Attempts",      value: totalAttempts.toLocaleString(), bg: "#fff2b3", iconColor: "#7a6000",
             icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
         ].map((c) => (
-          <div key={c.label} className="rounded-[20px] flex items-center gap-4 p-5" style={{ background: c.bg, boxShadow: "0 14px 28px rgba(32,28,54,0.06)", minHeight: "96px" }}>
-            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.52)", color: c.iconColor }}>
+          <div key={c.label} className="rounded-[20px] flex items-center gap-3 sm:gap-4 p-4 sm:p-5" style={{ background: c.bg, boxShadow: "0 14px 28px rgba(32,28,54,0.06)", minHeight: "90px" }}>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.52)", color: c.iconColor }}>
               {c.icon}
             </div>
-            <div>
-              <p className="text-[1.75rem] font-bold text-[#222225] leading-none mb-1" style={{ letterSpacing: "-0.05em" }}>{c.value}</p>
-              <p className="text-xs font-semibold text-[#4b4d58]">{c.label}</p>
+            <div className="min-w-0">
+              <p className="text-xl sm:text-[1.75rem] font-bold text-[#222225] leading-none mb-1 truncate" style={{ letterSpacing: "-0.05em" }}>{c.value}</p>
+              <p className="text-xs font-semibold text-[#4b4d58] truncate">{c.label}</p>
             </div>
           </div>
         ))}
@@ -213,8 +213,8 @@ export default function TestsPage() {
       )}
 
       {/* Tests list */}
-      <div className="bg-white rounded-[20px] overflow-hidden" style={{ border: "1px solid #f1f1f7", boxShadow: "0 14px 28px rgba(32,28,54,0.06)" }}>
-        <table className="w-full">
+      <div className="bg-white rounded-[20px] overflow-x-auto" style={{ border: "1px solid #f1f1f7", boxShadow: "0 14px 28px rgba(32,28,54,0.06)" }}>
+        <table className="w-full min-w-[900px]">
           <thead>
             <tr style={{ borderBottom: "1px solid #f1f1f7", background: "#f6f7fb" }}>
               <th className="text-left text-xs font-bold text-[#7b7b8d] px-6 py-3">Test</th>

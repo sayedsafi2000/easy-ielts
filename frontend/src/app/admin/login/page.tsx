@@ -47,7 +47,7 @@ export default function AdminLoginPage() {
           <p className="text-slate-400 text-sm mt-1">Sign in to manage the platform</p>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
           <form className="space-y-5" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-red-900/40 border border-red-700 text-red-400 text-sm rounded-xl px-4 py-3">

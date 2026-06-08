@@ -9,6 +9,7 @@ const AO = [requireAuth, requireRole('admin')];
 
 // Dashboard stats
 router.get('/stats',                ...AE, adminCtrl.stats);
+router.get('/badge-counts',         ...AE, adminCtrl.badgeCounts);
 
 // Students
 router.get('/students',             ...AO, adminCtrl.listStudents);

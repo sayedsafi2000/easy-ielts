@@ -38,7 +38,7 @@ export default function RegisterPage() {
   const inputStyle = { background: "#fafafe" };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4">
+    <div className="min-h-screen flex flex-col justify-center items-center py-8 sm:py-10 lg:py-12 px-4 sm:px-6">
 
       <Link href="/" className="inline-flex items-center gap-3 mb-8">
         <div
@@ -55,7 +55,7 @@ export default function RegisterPage() {
       </Link>
 
       <div
-        className="w-full max-w-[460px] rounded-[26px] border border-white/65 p-8"
+        className="w-full max-w-[460px] rounded-[26px] border border-white/65 p-6 sm:p-8"
         style={{ background: "#f8f8fb", boxShadow: "0 28px 80px rgba(96,73,162,0.14)" }}
       >
         <div className="mb-7 text-center">

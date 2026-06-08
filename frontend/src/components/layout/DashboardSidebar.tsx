@@ -30,8 +30,7 @@ const navItems = [
     href: "/dashboard/book-speaking",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-        <rect x="3" y="4" width="18" height="18" rx="2" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16 2v4M8 2v4M3 10h18" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
       </svg>
     ),
   },
@@ -101,6 +100,7 @@ export default function DashboardSidebar({ onClose }: { onClose?: () => void }) 
       <nav className="flex flex-col gap-2 flex-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
+          
           return (
             <Link
               key={item.href}
@@ -118,7 +118,7 @@ export default function DashboardSidebar({ onClose }: { onClose?: () => void }) 
               }
             >
               <span className={`shrink-0 ${isActive ? "text-white" : "text-[#7b7b8d]"}`}>{item.icon}</span>
-              <span className="whitespace-nowrap">{item.label}</span>
+              <span className="whitespace-nowrap flex-1">{item.label}</span>
             </Link>
           );
         })}

@@ -68,13 +68,13 @@ export default function DashboardRightPanel({ onClose }: { onClose?: () => void 
     <aside className="flex flex-col bg-white h-screen overflow-y-auto" style={{ scrollbarWidth: "none" }}>
       <div className="p-5 flex flex-col gap-5 min-h-full">
 
-        {/* Mobile Close Button */}
+        {/* Mobile/Tablet Close Button */}
         {onClose && (
-          <div className="flex items-center justify-between lg:hidden mb-2">
+          <div className="flex items-center justify-between xl:hidden mb-3 pb-3 border-b border-slate-100">
             <h3 className="text-sm font-bold text-slate-900">Profile & Activity</h3>
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors"
+              className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-slate-100 active:bg-slate-200 transition-colors"
               aria-label="Close panel"
             >
               <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

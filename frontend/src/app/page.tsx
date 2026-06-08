@@ -301,9 +301,9 @@ export default function LandingPage() {
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section id="home" className="bg-[#f0f4ff] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8 pt-16 pb-0 lg:pt-20 flex flex-col lg:flex-row items-center gap-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-12 lg:pb-0 flex flex-col lg:flex-row items-center gap-8 lg:gap-10">
           {/* Text */}
-          <div className="flex-1 lg:pr-10 pb-10 lg:pb-20">
+          <div className="flex-1 lg:pr-10 pb-0 lg:pb-20">
             <Badge>Trusted by 10,000+ students</Badge>
             <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-tight tracking-tight">
               Prepare for<br />
@@ -351,8 +351,8 @@ export default function LandingPage() {
               </div>
 
               {/* Floating band score card */}
-              <div className="absolute top-6 -left-6 bg-white rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-[#d4f53c] flex items-center justify-center text-lg font-extrabold text-slate-900">7.5</div>
+              <div className="absolute top-4 left-2 sm:top-6 sm:-left-6 bg-white rounded-2xl shadow-xl px-3 sm:px-4 py-2 sm:py-3 flex items-center gap-2 sm:gap-3">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#d4f53c] flex items-center justify-center text-base sm:text-lg font-extrabold text-slate-900">7.5</div>
                 <div>
                   <p className="text-xs font-bold text-slate-900">Band Score</p>
                   <p className="text-xs text-slate-500">Overall IELTS</p>
@@ -360,7 +360,7 @@ export default function LandingPage() {
               </div>
 
               {/* Floating progress card */}
-              <div className="absolute bottom-8 -left-8 bg-white rounded-2xl shadow-xl px-5 py-4">
+              <div className="absolute bottom-6 left-2 sm:bottom-8 sm:-left-8 bg-white rounded-2xl shadow-xl px-4 sm:px-5 py-3 sm:py-4">
                 <p className="text-xs font-bold text-slate-900 mb-3">Module progress</p>
                 {[
                   { l: "Listening", v: 85 },
@@ -382,8 +382,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── How it works ─────────────────────────────────────────────── */}
-      <section id="home" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <section id="home" className="py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <Badge>How it works</Badge>
             <h2 className="mt-4 text-3xl lg:text-4xl font-extrabold text-slate-900">A Simple and Smart Way<br />to Prepare for IELTS</h2>
@@ -406,8 +406,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Modules ──────────────────────────────────────────────────── */}
-      <section id="modules" className="py-20 bg-[#f7f8fc]">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <section id="modules" className="py-12 sm:py-16 lg:py-20 bg-[#f7f8fc]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <Badge>Modules</Badge>
             <h2 className="mt-4 text-3xl lg:text-4xl font-extrabold text-slate-900">IELTS Modules for Every Level</h2>
@@ -435,12 +435,12 @@ export default function LandingPage() {
       </section>
 
       {/* ── Speaking live (dark green) ────────────────────────────────── */}
-      <section className="py-6 px-5 lg:px-8">
+      <section className="py-6 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-[#0d2d1e] rounded-3xl overflow-hidden">
+          <div className="bg-[#0d2d1e] rounded-2xl sm:rounded-3xl overflow-hidden">
             <div className="flex flex-col lg:flex-row items-stretch gap-0">
               {/* Text */}
-              <div className="flex-1 p-10 lg:p-14 flex flex-col justify-center">
+              <div className="flex-1 p-6 sm:p-10 lg:p-14 flex flex-col justify-center">
                 <Badge>Speaking Module</Badge>
                 <h2 className="mt-5 text-3xl lg:text-4xl font-extrabold text-white leading-snug">
                   Take Your Speaking Test<br />Live with <span className="text-[#d4f53c]">Certified Examiners</span>
@@ -485,8 +485,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features ─────────────────────────────────────────────────── */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <section className="py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-start">
             <div className="lg:w-72 flex-shrink-0">
               <Badge>Features</Badge>
@@ -518,12 +518,12 @@ export default function LandingPage() {
       </section>
 
       {/* ── Practice anywhere (lime) ──────────────────────────────────── */}
-      <section className="py-6 px-5 lg:px-8">
+      <section className="py-6 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-[#d4f53c] rounded-3xl overflow-hidden">
+          <div className="bg-[#d4f53c] rounded-2xl sm:rounded-3xl overflow-hidden">
             <div className="flex flex-col lg:flex-row items-stretch gap-0">
               {/* Image left */}
-              <div className="lg:w-1/2 h-64 lg:h-auto flex-shrink-0 overflow-hidden">
+              <div className="lg:w-1/2 h-48 sm:h-64 lg:h-auto flex-shrink-0 overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?w=800&h=600&fit=crop&q=85"
                   alt="Student studying on phone"
@@ -532,7 +532,7 @@ export default function LandingPage() {
               </div>
 
               {/* Text */}
-              <div className="lg:w-1/2 p-10 lg:p-14 flex flex-col justify-center">
+              <div className="lg:w-1/2 p-6 sm:p-10 lg:p-14 flex flex-col justify-center">
                 <Badge>Accessible</Badge>
                 <h2 className="mt-4 text-3xl lg:text-4xl font-extrabold text-slate-900 leading-snug">
                   Practice Anytime,<br />Anywhere
@@ -567,8 +567,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Testimonials ─────────────────────────────────────────────── */}
-      <section className="py-20 bg-[#f7f8fc]">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <section className="py-12 sm:py-16 lg:py-20 bg-[#f7f8fc]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <Badge>Reviews</Badge>
             <h2 className="mt-4 text-3xl lg:text-4xl font-extrabold text-slate-900">Reviews from Our Students</h2>
@@ -601,8 +601,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pricing ──────────────────────────────────────────────────── */}
-      <section id="pricing" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <section id="pricing" className="py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <Badge>Pricing</Badge>
             <h2 className="mt-4 text-3xl lg:text-4xl font-extrabold text-slate-900">Choose the Plan That Works for You</h2>
@@ -656,8 +656,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────────────────── */}
-      <section id="faq" className="py-20 bg-[#f7f8fc]">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <section id="faq" className="py-12 sm:py-16 lg:py-20 bg-[#f7f8fc]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-14">
             <div className="lg:w-64 flex-shrink-0">
               <Badge>FAQ</Badge>
@@ -704,11 +704,11 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA (dark) ───────────────────────────────────────────────── */}
-      <section className="py-6 px-5 lg:px-8">
+      <section className="py-6 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-slate-900 rounded-3xl overflow-hidden">
+          <div className="bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden">
             <div className="flex flex-col lg:flex-row items-stretch">
-              <div className="lg:w-1/2 p-10 lg:p-14 flex flex-col justify-center">
+              <div className="lg:w-1/2 p-6 sm:p-10 lg:p-14 flex flex-col justify-center">
                 <Badge>Get started today</Badge>
                 <h2 className="mt-5 text-3xl lg:text-4xl font-extrabold text-white leading-snug">
                   Start Your IELTS<br />Journey <span className="text-[#d4f53c]">Today</span>
@@ -726,7 +726,7 @@ export default function LandingPage() {
                 </div>
               </div>
               {/* CTA image */}
-              <div className="lg:w-1/2 h-64 lg:h-auto relative overflow-hidden">
+              <div className="lg:w-1/2 h-48 sm:h-64 lg:h-auto relative overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1627556704302-624286467c65?w=800&h=600&fit=crop&q=85"
                   alt="Student graduating"
@@ -740,12 +740,12 @@ export default function LandingPage() {
       </section>
 
       {/* ── Newsletter ───────────────────────────────────────────────── */}
-      <section className="py-16 bg-white">
-        <div className="max-w-xl mx-auto px-5 text-center">
+      <section className="py-12 sm:py-14 lg:py-16 bg-white">
+        <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
           <Badge>Stay Updated</Badge>
           <h2 className="mt-4 text-2xl font-extrabold text-slate-900">Get IELTS tips in your inbox</h2>
           <p className="mt-2 text-sm text-slate-500">Study strategies, band score guides, and platform updates. No spam.</p>
-          <form className="mt-6 flex gap-2" onSubmit={(e) => e.preventDefault()}>
+          <form className="mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
               placeholder="Enter your email"
@@ -759,8 +759,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────────────────── */}
-      <footer className="bg-slate-50 border-t border-slate-200 py-12">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <footer className="bg-slate-50 border-t border-slate-200 py-10 sm:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
             <div className="col-span-2">
               <Link href="/" className="flex items-center gap-2 mb-3">

@@ -85,6 +85,7 @@ async function googleCallback(req, res) {
 
     const email    = payload.email.toLowerCase();
     const name     = payload.name  ?? email.split('@')[0];
+    const picture  = payload.picture || null;
     const googleId = payload.sub;
 
     // Find or create the user in our database
@@ -93,22 +94,32 @@ async function googleCallback(req, res) {
       // New user — create with a random non-usable password hash
       const { rows } = await query(
         `INSERT INTO profiles
-           (email, password_hash, full_name, role, plan, email_verified, google_id)
-         VALUES ($1, $2, $3, 'student', 'starter', TRUE, $4)
+           (email, password_hash, full_name, avatar_url, role, plan, email_verified, google_id)
+         VALUES ($1, $2, $3, $4, 'student', 'starter', TRUE, $5)
          ON CONFLICT (email) DO UPDATE
            SET email_verified = TRUE,
                google_id = EXCLUDED.google_id,
+               full_name = EXCLUDED.full_name,
+               avatar_url = EXCLUDED.avatar_url,
                updated_at = NOW()
-         RETURNING id, email, full_name, role, plan, track, target_band`,
-        [email, 'google-oauth-no-password', name, googleId]
+         RETURNING id, email, full_name, avatar_url, role, plan, track, target_band`,
+        [email, 'google-oauth-no-password', name, picture, googleId]
       );
       user = rows[0];
     } else {
-      // Existing user — ensure email_verified and google_id are set
+      // Existing user — update email_verified, google_id, full_name, and avatar from Google
       await query(
-        `UPDATE profiles SET email_verified = TRUE, google_id = $1, updated_at = NOW() WHERE id = $2`,
-        [googleId, user.id]
+        `UPDATE profiles 
+         SET email_verified = TRUE, 
+             google_id = $1, 
+             full_name = $3,
+             avatar_url = $4,
+             updated_at = NOW() 
+         WHERE id = $2`,
+        [googleId, user.id, name, picture]
       );
+      // Refresh user data to get updated full_name and avatar
+      user = await userModel.findById(user.id);
     }
 
     // Issue our own JWT
