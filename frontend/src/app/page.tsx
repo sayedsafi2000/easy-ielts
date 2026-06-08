@@ -19,6 +19,14 @@ function Navbar() {
     router.push("/");
   }
 
+  // Smooth scroll without hash in URL
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <header className="bg-white border-b border-slate-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between gap-6">
@@ -33,7 +41,7 @@ function Navbar() {
 
         <nav className="hidden md:flex items-center gap-7">
           {["Home", "Modules", "Teachers", "Pricing", "FAQ"].map((n) => (
-            <a key={n} href={`#${n.toLowerCase()}`} className="text-sm text-slate-600 hover:text-slate-900 transition-colors cursor-pointer">{n}</a>
+            <button key={n} onClick={() => scrollToSection(n.toLowerCase())} className="text-sm text-slate-600 hover:text-slate-900 transition-colors cursor-pointer">{n}</button>
           ))}
         </nav>
 
@@ -62,7 +70,7 @@ function Navbar() {
       {open && (
         <div className="md:hidden px-5 pb-4 space-y-3 border-t border-slate-100">
           {["Home", "Modules", "Teachers", "Pricing", "FAQ"].map((n) => (
-            <a key={n} href={`#${n.toLowerCase()}`} className="block text-sm text-slate-600 py-1 cursor-pointer">{n}</a>
+            <button key={n} onClick={() => { scrollToSection(n.toLowerCase()); setOpen(false); }} className="block text-sm text-slate-600 py-1 cursor-pointer text-left w-full">{n}</button>
           ))}
           <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
             {loading ? null : user ? (
