@@ -13,13 +13,14 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Accept the public API URL at build time (Coolify env var)
-ARG NEXT_PUBLIC_API_URL=http://localhost:4000
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:4000}
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Enable Next.js standalone output (smaller Docker image)
+RUN echo "Building with NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}"
 RUN npm run build
 
 # ── Runtime stage ─────────────────────────────────────────────────────────────
