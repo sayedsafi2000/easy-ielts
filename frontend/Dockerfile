@@ -1,48 +1,26 @@
-# ── Frontend Dockerfile ───────────────────────────────────────────────────────
-# Next.js 14 with standalone output for minimal image size.
-# Build arg NEXT_PUBLIC_API_URL is injected at build time by Coolify.
-# ─────────────────────────────────────────────────────────────────────────────
+FROM node:20-alpine
 
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-
-# ── Build stage ───────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Accept the public API URL at build time (Coolify env var)
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+# Build args from Coolify
+ARG NEXT_PUBLIC_API_URL=http://localhost:4000
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=deps /app/node_modules ./node_modules
+# Install dependencies
+COPY package.json package-lock.json* ./
+RUN NODE_ENV=development npm ci --include=dev
+
 COPY . .
 
-# Enable Next.js standalone output (smaller Docker image)
-RUN echo "Building with NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}"
-RUN npm run build
+# Build
+RUN NODE_ENV=production npm run build
 
-# ── Runtime stage ─────────────────────────────────────────────────────────────
-FROM node:20-alpine AS runner
-WORKDIR /app
-
+# Runtime
 ENV NODE_ENV=production
 ENV PORT=3000
-
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
-# Copy only what Next.js standalone needs
-COPY --from=builder --chown=appuser:appgroup /app/.next/standalone ./
-COPY --from=builder --chown=appuser:appgroup /app/.next/static ./.next/static
-COPY --from=builder --chown=appuser:appgroup /app/public ./public
-
-USER appuser
+ENV HOSTNAME=0.0.0.0
 
 EXPOSE 3000
 
-# Health check temporarily disabled for debugging
-# HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=5 \
-#   CMD node -e "require('http').get('http://localhost:3000',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
-
-CMD ["node", "server.js"]
+CMD ["npm", "start"]

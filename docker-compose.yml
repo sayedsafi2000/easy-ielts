@@ -35,6 +35,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     restart: unless-stopped
+    expose:
+      - '4000'
     depends_on:
       db:
         condition: service_healthy
@@ -66,17 +68,6 @@ services:
       GOOGLE_CALLBACK_URL:  ${GOOGLE_CALLBACK_URL}
     volumes:
       - uploads_data:/app/uploads
-    networks:
-      - ielts_net
-      - coolify
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`ieltsserver.pixelsbee.com`)"
-      - "traefik.http.routers.backend.entryPoints=https"
-      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.backend.loadbalancer.server.port=4000"
-      - "traefik.http.routers.backend-http.rule=Host(`ieltsserver.pixelsbee.com`)"
-      - "traefik.http.routers.backend-http.entryPoints=http"
 
   # ── DB Migration (runs once, then exits) ────────────────────────────────────
   migrate:
@@ -94,12 +85,8 @@ services:
       PGPASSWORD: ${PGPASSWORD:-postgres}
       PGDATABASE: ${PGDATABASE:-easy_ielts}
     command: ["node", "scripts/migrate.js"]
-    networks:
-      - ielts_net
-    labels:
-      - "coolify.managed=false"
 
-  # ── Frontend (Next.js standalone) ───────────────────────────────────────────
+  # ── Frontend (Next.js) ───────────────────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
@@ -108,29 +95,14 @@ services:
         # Baked into the Next.js bundle at build time
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
     restart: unless-stopped
+    expose:
+      - '3000'
     depends_on:
       - backend
     environment:
       NODE_ENV: production
       PORT:     3000
-    networks:
-      - ielts_net
-      - coolify
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`ielts.pixelsbee.com`)"
-      - "traefik.http.routers.frontend.entryPoints=https"
-      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-      - "traefik.http.routers.frontend-http.rule=Host(`ielts.pixelsbee.com`)"
-      - "traefik.http.routers.frontend-http.entryPoints=http"
 
 volumes:
   postgres_data:
   uploads_data:
-
-networks:
-  ielts_net:
-    driver: bridge
-  coolify:
-    external: true
