@@ -1,0 +1,24 @@
+name: Deploy to Coolify
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Trigger Coolify Deployment
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Trigger Coolify webhook
+        run: |
+          curl -X POST "${{ secrets.COOLIFY_WEBHOOK_URL }}"
+      
+      - name: Deployment triggered
+        run: |
+          echo "✅ Deployment webhook sent to Coolify"
+          echo "Check your Coolify dashboard for deployment status"
