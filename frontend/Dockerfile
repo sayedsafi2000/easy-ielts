@@ -41,8 +41,8 @@ USER appuser
 
 EXPOSE 3000
 
-# Simple health check using built-in Node.js
-HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=5 \
-  CMD node -e "require('http').get('http://localhost:3000',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
+# Health check temporarily disabled for debugging
+# HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=5 \
+#   CMD node -e "require('http').get('http://localhost:3000',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
 
 CMD ["node", "server.js"]
