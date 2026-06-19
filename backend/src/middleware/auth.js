@@ -2,8 +2,8 @@
  * JWT authentication middleware.
  *
  * Reads the token from either:
- *   1. Authorization: Bearer <token>     (preferred for cross-origin clients)
- *   2. Cookie:        eielts_token=<jwt> (set on login by the API)
+ *   1. Cookie:        eielts_token=<jwt> (set on login + Google OAuth)
+ *   2. Authorization: Bearer <token>     (fallback for non-browser clients)
  *
  * On success, attaches req.user = { id, role } and calls next().
  * On failure, returns 401.
@@ -13,9 +13,13 @@ const jwt = require('jsonwebtoken');
 const COOKIE_NAME = process.env.COOKIE_NAME || 'eielts_token';
 
 function readToken(req) {
+  // Prefer the httpOnly cookie issued by the API (always freshly set on login
+  // and Google OAuth). Fall back to a Bearer header for non-browser clients
+  // (e.g. mobile) that have no cookie. Cookie-first avoids a stale Bearer token
+  // in localStorage shadowing a valid cookie after OAuth redirects.
+  if (req.cookies && req.cookies[COOKIE_NAME]) return req.cookies[COOKIE_NAME];
   const auth = req.headers.authorization;
   if (auth && auth.startsWith('Bearer ')) return auth.slice(7);
-  if (req.cookies && req.cookies[COOKIE_NAME]) return req.cookies[COOKIE_NAME];
   return null;
 }
 
